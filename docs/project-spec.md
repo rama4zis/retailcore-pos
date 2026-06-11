@@ -4,6 +4,17 @@
 
 Build a mini POS system for small retail stores with product management, inventory tracking, sales checkout, receipts, and reporting.
 
+## Tech Stack
+
+- Java 25
+- Spring Boot 4
+- Spring Security
+- JWT authentication
+- Spring Data JPA
+- PostgreSQL
+- React + Tailwind CSS
+- Docker Compose
+
 ## Roles
 
 - Admin: full system access, user management, reports

@@ -4,7 +4,7 @@ RetailCore POS is a point-of-sale system for small retail stores.
 
 ## Planned Tech Stack
 
-- Backend: Java 21, Spring Boot 3, Spring Security, JWT, Spring Data JPA
+- Backend: Java 25, Spring Boot 4, Spring Security, JWT, Spring Data JPA
 - Database: PostgreSQL
 - Frontend: React + Tailwind CSS
 - Testing: JUnit 5, Mockito, Testcontainers
