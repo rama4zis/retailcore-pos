@@ -1,0 +1,24 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Java / Spring Boot
+*.class
+target/
+build/
+.gradle/
+
+# Node / frontend
+node_modules/
+dist/
+.next/
+.env
+.env.*
+
+# Logs
+*.log
+
+# Docker / local data
+postgres-data/
