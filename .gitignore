@@ -14,8 +14,11 @@ build/
 node_modules/
 dist/
 .next/
+
+# Environment variables
 .env
 .env.*
+!.env.example
 
 # Logs
 *.log

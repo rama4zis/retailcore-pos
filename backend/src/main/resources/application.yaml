@@ -1,3 +1,21 @@
 spring:
   application:
     name: retailcore-pos
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/retailcore_pos}
+    username: ${DB_USERNAME:retailcore}
+    password: ${DB_PASSWORD:retailcore_dev_password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

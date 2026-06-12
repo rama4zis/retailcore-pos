@@ -6,8 +6,8 @@ Build a mini POS system for small retail stores with product management, invento
 
 ## Tech Stack
 
-- Java 25
-- Spring Boot 4
+- Java 21
+- Spring Boot 3
 - Spring Security
 - JWT authentication
 - Spring Data JPA
