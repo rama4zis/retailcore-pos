@@ -1,0 +1,2 @@
+-- Baseline migration for RetailCore POS.
+-- Domain tables start in Phase 1 with the category module.

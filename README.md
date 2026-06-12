@@ -75,14 +75,14 @@ Planned later:
 
 ### Not Done Yet
 
-- [ ] Add Docker Compose for PostgreSQL
-- [ ] Add Flyway dependency
-- [ ] Add first database migration
-- [ ] Add Spring Security dependency
-- [ ] Add JWT dependency
-- [ ] Add OpenAPI/Swagger dependency
-- [ ] Add Testcontainers dependency
-- [ ] Verify backend starts against local PostgreSQL
+- [x] Add Docker Compose for PostgreSQL
+- [x] Add Flyway dependency
+- [x] Add first database migration
+- [x] Add Spring Security dependency
+- [x] Add JWT dependency
+- [x] Add OpenAPI/Swagger dependency
+- [x] Add Testcontainers dependency
+- [x] Verify backend starts against local PostgreSQL
 - [ ] Build category module
 - [ ] Build product module
 - [ ] Build inventory module
@@ -137,10 +137,10 @@ This is the current implementation path.
 - [x] Create Spring Boot backend
 - [x] Configure Java 21
 - [x] Configure PostgreSQL datasource
-- [ ] Fix local database startup using Docker Compose
-- [ ] Add Flyway migrations
-- [ ] Add missing dependencies
-- [ ] Verify app startup
+- [x] Fix local database startup using Docker Compose
+- [x] Add Flyway migrations
+- [x] Add missing dependencies
+- [x] Verify app startup
 
 ### Phase 1 — Category Module
 
