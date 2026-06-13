@@ -1,5 +1,6 @@
 package com.retailcore.pos.common.exception;
 
+import com.retailcore.pos.category.exception.CategoryInUseException;
 import com.retailcore.pos.common.dto.ApiErrorResponse;
 import com.retailcore.pos.common.dto.FieldErrorResponse;
 import java.util.Comparator;
@@ -20,6 +21,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateResourceException.class)
     ResponseEntity<ApiErrorResponse> handleDuplicateResource(DuplicateResourceException exception) {
+        return error(HttpStatus.CONFLICT, exception.getMessage());
+    }
+
+    @ExceptionHandler(CategoryInUseException.class)
+    ResponseEntity<ApiErrorResponse> handleCategoryInUse(CategoryInUseException exception) {
         return error(HttpStatus.CONFLICT, exception.getMessage());
     }
 

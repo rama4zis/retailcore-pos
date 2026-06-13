@@ -144,18 +144,18 @@ This is the current implementation path.
 
 ### Phase 1 — Category Module
 
-- [ ] Create `category` package
-- [ ] Create `Category` entity
-- [ ] Create Flyway migration for `categories` table
-- [ ] Create `CategoryRepository`
-- [ ] Create request/response DTOs
-- [ ] Create `CategoryService`
-- [ ] Create `CategoryController`
-- [ ] Add validation
-- [ ] Add duplicate-name protection
-- [ ] Add delete protection when products exist
-- [ ] Add tests
-- [ ] Manually test API endpoints
+- [x] Create `category` package
+- [x] Create `Category` entity
+- [x] Create Flyway migration for `categories` table
+- [x] Create `CategoryRepository`
+- [x] Create request/response DTOs
+- [x] Create `CategoryService`
+- [x] Create `CategoryController`
+- [x] Add validation
+- [x] Add duplicate-name protection
+- [x] Add delete protection when products exist
+- [x] Add tests
+- [x] Manually test API endpoints
 
 Endpoints planned:
 
