@@ -89,7 +89,7 @@ Planned later:
 - [x] Build authentication module
 - [x] Build sales checkout module
 - [x] Build payment handling
-- [ ] Build receipt response
+- [x] Build receipt response
 - [ ] Build reporting endpoints
 - [ ] Build frontend
 
@@ -290,14 +290,14 @@ CARD
 
 ### Phase 7 — Receipt Response
 
-- [ ] Create receipt DTO
-- [ ] Return receipt data after checkout
-- [ ] Include sale number
-- [ ] Include cashier name
-- [ ] Include item snapshots
-- [ ] Include totals
-- [ ] Include payment details
-- [ ] Include change amount
+- [x] Create receipt DTO
+- [x] Return receipt data after checkout
+- [x] Include sale number
+- [x] Include cashier name
+- [x] Include item snapshots
+- [x] Include totals
+- [x] Include payment details
+- [x] Include change amount
 - [ ] Add printable receipt later
 
 ### Phase 8 — Refunds

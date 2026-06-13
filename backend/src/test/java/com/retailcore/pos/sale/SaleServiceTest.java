@@ -13,13 +13,18 @@ import com.retailcore.pos.inventory.InventoryStockRepository;
 import com.retailcore.pos.inventory.StockMovementEntity;
 import com.retailcore.pos.inventory.StockMovementRepository;
 import com.retailcore.pos.inventory.StockMovementType;
+import com.retailcore.pos.payment.PaymentAmountMismatchException;
+import com.retailcore.pos.payment.PaymentEntity;
+import com.retailcore.pos.payment.PaymentMethod;
+import com.retailcore.pos.payment.PaymentRepository;
 import com.retailcore.pos.product.ProductDetails;
 import com.retailcore.pos.product.ProductEntity;
 import com.retailcore.pos.product.ProductRepository;
 import com.retailcore.pos.product.exception.ProductNotFoundException;
+import com.retailcore.pos.receipt.dto.ReceiptResponse;
 import com.retailcore.pos.sale.dto.CheckoutItemRequest;
+import com.retailcore.pos.sale.dto.CheckoutPaymentRequest;
 import com.retailcore.pos.sale.dto.CheckoutRequest;
-import com.retailcore.pos.sale.dto.SaleResponse;
 import com.retailcore.pos.user.UserEntity;
 import com.retailcore.pos.user.UserRepository;
 import com.retailcore.pos.user.UserRole;
@@ -50,6 +55,9 @@ class SaleServiceTest {
     private StockMovementRepository stockMovementRepository;
 
     @Mock
+    private PaymentRepository paymentRepository;
+
+    @Mock
     private UserRepository userRepository;
 
     @InjectMocks
@@ -65,20 +73,28 @@ class SaleServiceTest {
         when(inventoryStockRepository.findByProductId(10L)).thenReturn(Optional.of(stock));
         when(inventoryStockRepository.save(stock)).thenReturn(stock);
         when(stockMovementRepository.save(any(StockMovementEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(saleRepository.save(any(SaleEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(saleRepository.save(any(SaleEntity.class))).thenAnswer(invocation -> {
+            SaleEntity sale = invocation.getArgument(0);
+            ReflectionTestUtils.setField(sale, "id", 50L);
+            return sale;
+        });
+        when(paymentRepository.save(any(PaymentEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        SaleResponse response = saleService.checkout(
+        ReceiptResponse response = saleService.checkout(
                 "cashier@example.com",
-                new CheckoutRequest(List.of(new CheckoutItemRequest(10L, 2)))
+                checkoutRequest("7000.00")
         );
 
         ArgumentCaptor<SaleEntity> saleCaptor = ArgumentCaptor.forClass(SaleEntity.class);
         ArgumentCaptor<StockMovementEntity> movementCaptor = ArgumentCaptor.forClass(StockMovementEntity.class);
+        ArgumentCaptor<PaymentEntity> paymentCaptor = ArgumentCaptor.forClass(PaymentEntity.class);
         verify(saleRepository).save(saleCaptor.capture());
         verify(stockMovementRepository).save(movementCaptor.capture());
+        verify(paymentRepository).save(paymentCaptor.capture());
 
         SaleEntity sale = saleCaptor.getValue();
         StockMovementEntity movement = movementCaptor.getValue();
+        PaymentEntity payment = paymentCaptor.getValue();
 
         assertThat(stock.getQuantity()).isEqualTo(3);
         assertThat(sale.getSaleNumber()).startsWith("SALE-");
@@ -88,7 +104,14 @@ class SaleServiceTest {
         assertThat(sale.getItems().getFirst().getUnitPrice()).isEqualByComparingTo("3500.00");
         assertThat(sale.getItems().getFirst().getLineTotal()).isEqualByComparingTo("7000.00");
         assertThat(response.totalAmount()).isEqualByComparingTo("7000.00");
+        assertThat(response.saleNumber()).startsWith("SALE-");
+        assertThat(response.cashierName()).isEqualTo("Cashier One");
         assertThat(response.items().getFirst().sku()).isEqualTo("SKU-001");
+        assertThat(response.payment().method()).isEqualTo(PaymentMethod.CASH);
+        assertThat(response.payment().cashTendered()).isEqualByComparingTo("10000.00");
+        assertThat(response.changeAmount()).isEqualByComparingTo("3000.00");
+        assertThat(payment.getSale()).isSameAs(sale);
+        assertThat(payment.getChangeAmount()).isEqualByComparingTo("3000.00");
         assertThat(movement.getMovementType()).isEqualTo(StockMovementType.SALE);
         assertThat(movement.getQuantityChange()).isEqualTo(-2);
         assertThat(movement.getStockAfter()).isEqualTo(3);
@@ -101,7 +124,7 @@ class SaleServiceTest {
 
         assertThatThrownBy(() -> saleService.checkout(
                 "cashier@example.com",
-                new CheckoutRequest(List.of(new CheckoutItemRequest(99L, 1)))
+                checkoutRequest(99L, 1, "3500.00")
         ))
                 .isInstanceOf(ProductNotFoundException.class)
                 .hasMessageContaining("Product not found with id: 99");
@@ -118,7 +141,7 @@ class SaleServiceTest {
 
         assertThatThrownBy(() -> saleService.checkout(
                 "cashier@example.com",
-                new CheckoutRequest(List.of(new CheckoutItemRequest(10L, 1)))
+                checkoutRequest(10L, 1, "3500.00")
         ))
                 .isInstanceOf(InactiveProductSaleException.class)
                 .hasMessageContaining("Cannot sell inactive product with id: 10");
@@ -137,7 +160,7 @@ class SaleServiceTest {
 
         assertThatThrownBy(() -> saleService.checkout(
                 "cashier@example.com",
-                new CheckoutRequest(List.of(new CheckoutItemRequest(10L, 2)))
+                checkoutRequest("7000.00")
         ))
                 .isInstanceOf(InsufficientStockException.class)
                 .hasMessageContaining("requested 2, available 1");
@@ -148,12 +171,49 @@ class SaleServiceTest {
     }
 
     @Test
+    void checkoutRejectsPaymentAmountThatDoesNotMatchSaleTotal() {
+        UserEntity cashier = cashier();
+        ProductEntity product = product(10L, "SKU-001", "Mineral Water", "3500.00", true);
+        InventoryStockEntity stock = stock(product, 5);
+        when(userRepository.findByEmailIgnoreCase("cashier@example.com")).thenReturn(Optional.of(cashier));
+        when(productRepository.findById(10L)).thenReturn(Optional.of(product));
+        when(inventoryStockRepository.findByProductId(10L)).thenReturn(Optional.of(stock));
+        when(inventoryStockRepository.save(stock)).thenReturn(stock);
+        when(stockMovementRepository.save(any(StockMovementEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        assertThatThrownBy(() -> saleService.checkout(
+                "cashier@example.com",
+                checkoutRequest("6000.00")
+        ))
+                .isInstanceOf(PaymentAmountMismatchException.class)
+                .hasMessageContaining("Payment amount 6000.00 must equal sale total 7000.00");
+
+        verify(saleRepository, never()).save(any());
+        verify(paymentRepository, never()).save(any());
+    }
+
+    @Test
     void findByIdRejectsMissingSale() {
         when(saleRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> saleService.findById(99L))
                 .isInstanceOf(SaleNotFoundException.class)
                 .hasMessageContaining("Sale not found with id: 99");
+    }
+
+    private static CheckoutRequest checkoutRequest(String paymentAmount) {
+        return checkoutRequest(10L, 2, paymentAmount);
+    }
+
+    private static CheckoutRequest checkoutRequest(Long productId, int quantity, String paymentAmount) {
+        return new CheckoutRequest(
+                List.of(new CheckoutItemRequest(productId, quantity)),
+                new CheckoutPaymentRequest(
+                        PaymentMethod.CASH,
+                        new BigDecimal(paymentAmount),
+                        new BigDecimal("10000.00")
+                )
+        );
     }
 
     private static InventoryStockEntity stock(ProductEntity product, int quantity) {

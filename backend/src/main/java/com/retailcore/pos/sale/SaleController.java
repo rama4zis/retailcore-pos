@@ -1,5 +1,6 @@
 package com.retailcore.pos.sale;
 
+import com.retailcore.pos.receipt.dto.ReceiptResponse;
 import com.retailcore.pos.sale.dto.CheckoutRequest;
 import com.retailcore.pos.sale.dto.SaleResponse;
 import jakarta.validation.Valid;
@@ -25,12 +26,12 @@ public class SaleController {
     private final SaleService saleService;
 
     @PostMapping("/checkout")
-    public ResponseEntity<SaleResponse> checkout(
+    public ResponseEntity<ReceiptResponse> checkout(
             Principal principal,
             @Valid @RequestBody CheckoutRequest request
     ) {
-        SaleResponse response = saleService.checkout(principal.getName(), request);
-        return ResponseEntity.created(URI.create("/api/sales/" + response.id())).body(response);
+        ReceiptResponse response = saleService.checkout(principal.getName(), request);
+        return ResponseEntity.created(URI.create("/api/sales/" + response.saleId())).body(response);
     }
 
     @GetMapping

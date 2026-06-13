@@ -4,7 +4,7 @@ This file is the compact handoff state for future sessions. Treat `README.md` an
 
 ## Current Checkpoint
 
-Next recommended work: start Phase 7 receipt response.
+Next recommended work: start Phase 8 refunds.
 
 ## Phase 0 — Project Baseline
 
@@ -282,6 +282,34 @@ GET  /api/payments/{id}
 Verification:
 - Focused payment tests passed: `./mvnw -Dtest=PaymentServiceTest,PaymentControllerTest test` with 13 tests, 0 failures, 0 errors.
 - Full backend test suite passed: `./mvnw test` with 100 tests, 0 failures, 0 errors.
+
+## Phase 7 — Receipt Response
+
+Status: Done
+
+Implemented:
+- `receipt` feature package for receipt response DTOs
+- Receipt DTOs:
+  - `ReceiptResponse`
+  - `ReceiptItemResponse`
+  - `ReceiptPaymentResponse`
+- Checkout payment DTO:
+  - `CheckoutPaymentRequest`
+- Checkout now accepts payment details and returns receipt data instead of the sale-only response
+- Receipt response includes sale number, cashier name, completed timestamp, item snapshots, total amount, payment details, and change amount
+- Checkout now creates the sale and payment in the same transaction
+- Checkout validates payment amount against the sale total and applies existing cash/card payment rules
+- Sale history endpoints still return sale responses
+- Sale service/controller tests updated for receipt checkout behavior
+
+Endpoints updated:
+
+```http
+POST /api/sales/checkout
+```
+
+Verification:
+- Focused receipt/checkout tests passed: `./mvnw -Dtest=SaleServiceTest,SaleControllerTest test` with 12 tests, 0 failures, 0 errors.
 
 ## Session Handoff Prompt
 
