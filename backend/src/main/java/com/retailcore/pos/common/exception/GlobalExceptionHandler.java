@@ -7,6 +7,8 @@ import com.retailcore.pos.common.dto.ApiErrorResponse;
 import com.retailcore.pos.inventory.InvalidStockAdjustmentException;
 import com.retailcore.pos.inventory.NegativeStockException;
 import com.retailcore.pos.common.dto.FieldErrorResponse;
+import com.retailcore.pos.sale.InactiveProductSaleException;
+import com.retailcore.pos.sale.InsufficientStockException;
 import java.util.Comparator;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -33,7 +35,12 @@ public class GlobalExceptionHandler {
         return error(HttpStatus.CONFLICT, exception.getMessage());
     }
 
-    @ExceptionHandler({NegativeStockException.class, InvalidStockAdjustmentException.class})
+    @ExceptionHandler({
+            NegativeStockException.class,
+            InvalidStockAdjustmentException.class,
+            InsufficientStockException.class,
+            InactiveProductSaleException.class
+    })
     ResponseEntity<ApiErrorResponse> handleInventoryConflict(RuntimeException exception) {
         return error(HttpStatus.CONFLICT, exception.getMessage());
     }

@@ -4,7 +4,7 @@ This file is the compact handoff state for future sessions. Treat `README.md` an
 
 ## Current Checkpoint
 
-Next recommended work: start Phase 5 sales checkout.
+Next recommended work: start Phase 6 payment handling.
 
 ## Phase 0 — Project Baseline
 
@@ -208,6 +208,46 @@ PATCH /api/users/{id}/active
 
 Verification:
 - `./mvnw test` passed with 76 tests, 0 failures, 0 errors.
+
+## Phase 5 — Sales Checkout
+
+Status: Done
+
+Implemented:
+- `sale` feature package
+- `SaleEntity`
+- `SaleItemEntity`
+- `SaleStatus` enum with `COMPLETED`
+- Flyway migration: `V6__create_sales_tables.sql`
+- Sale repositories:
+  - `SaleRepository`
+  - `SaleItemRepository`
+- Sale DTOs:
+  - `CheckoutRequest`
+  - `CheckoutItemRequest`
+  - `SaleResponse`
+  - `SaleItemResponse`
+- `SaleService`
+- `SaleController`
+- Checkout endpoint that copies product price at sale time
+- Stock availability check before sale completion
+- Stock reduction after checkout
+- `SALE` stock movement records for sold items
+- Completed-only sale persistence; no edit endpoints exposed for completed sales
+- Sale service tests and controller tests
+- Sale conflict exceptions for insufficient stock and inactive products
+
+Endpoints implemented:
+
+```http
+POST /api/sales/checkout
+GET  /api/sales
+GET  /api/sales/{id}
+```
+
+Verification:
+- Focused sale tests passed: `./mvnw -Dtest=SaleServiceTest,SaleControllerTest test` with 11 tests, 0 failures, 0 errors.
+- Full backend test suite passed: `./mvnw test` with 87 tests, 0 failures, 0 errors.
 
 ## Session Handoff Prompt
 

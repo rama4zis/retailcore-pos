@@ -87,7 +87,7 @@ Planned later:
 - [ ] Build product module
 - [x] Build inventory module
 - [x] Build authentication module
-- [ ] Build sales checkout module
+- [x] Build sales checkout module
 - [ ] Build payment handling
 - [ ] Build receipt response
 - [ ] Build reporting endpoints
@@ -247,20 +247,20 @@ PATCH /api/users/{id}/active
 
 ### Phase 5 — Sales Checkout
 
-- [ ] Create `sale` package
-- [ ] Create `Sale` entity
-- [ ] Create `SaleItem` entity
-- [ ] Create migrations for sales tables
-- [ ] Create sale repositories
-- [ ] Create checkout request/response DTOs
-- [ ] Create `SaleService`
-- [ ] Create `SaleController`
-- [ ] Copy product price at sale time
-- [ ] Check stock before completing sale
-- [ ] Reduce stock after sale completion
-- [ ] Create stock movement records for sold items
-- [ ] Prevent editing completed sales
-- [ ] Add tests
+- [x] Create `sale` package
+- [x] Create `Sale` entity
+- [x] Create `SaleItem` entity
+- [x] Create migrations for sales tables
+- [x] Create sale repositories
+- [x] Create checkout request/response DTOs
+- [x] Create `SaleService`
+- [x] Create `SaleController`
+- [x] Copy product price at sale time
+- [x] Check stock before completing sale
+- [x] Reduce stock after sale completion
+- [x] Create stock movement records for sold items
+- [x] Prevent editing completed sales
+- [x] Add tests
 
 Endpoints planned:
 
