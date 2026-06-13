@@ -4,7 +4,7 @@ This file is the compact handoff state for future sessions. Treat `README.md` an
 
 ## Current Checkpoint
 
-Next recommended work: start Phase 9 reports.
+Next recommended work: start Phase 10 API documentation.
 
 ## Phase 0 — Project Baseline
 
@@ -343,6 +343,43 @@ POST /api/sales/{saleId}/refunds
 Verification:
 - Focused refund tests passed: `./mvnw -Dtest=RefundServiceTest,SaleControllerTest test` with 14 tests, 0 failures, 0 errors.
 - Full backend test suite passed: `./mvnw test` with 109 tests, 0 failures, 0 errors.
+
+## Phase 9 — Reports
+
+Status: Done
+
+Implemented:
+- `report` feature package
+- Report DTOs:
+  - `SalesTotalResponse`
+  - `TopSellingProductResponse`
+  - `CashierSalesReportResponse`
+  - `PaymentMethodSummaryResponse`
+- `ReportService`
+- `ReportController`
+- Daily sales total query by requested date
+- Monthly sales total query by requested year/month
+- Top-selling products query grouped by product snapshot
+- Low-stock products report using inventory stock thresholds
+- Sales-by-cashier query grouped by cashier
+- Payment method summary query grouped by payment method
+- Manager/admin-only report access
+- Report service and controller tests
+
+Endpoints implemented:
+
+```http
+GET /api/reports/daily-sales?date=YYYY-MM-DD
+GET /api/reports/monthly-sales?year=YYYY&month=M
+GET /api/reports/top-products
+GET /api/reports/low-stock
+GET /api/reports/sales-by-cashier
+GET /api/reports/payment-summary
+```
+
+Verification:
+- Focused report tests passed: `./mvnw -Dtest=ReportServiceTest,ReportControllerTest test` with 14 tests, 0 failures, 0 errors.
+- Full backend test suite passed: `./mvnw test` with 123 tests, 0 failures, 0 errors.
 
 ## Session Handoff Prompt
 

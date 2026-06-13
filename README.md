@@ -90,7 +90,7 @@ Planned later:
 - [x] Build sales checkout module
 - [x] Build payment handling
 - [x] Build receipt response
-- [ ] Build reporting endpoints
+- [x] Build reporting endpoints
 - [ ] Build frontend
 
 ## Main Roles
@@ -318,21 +318,22 @@ POST /api/sales/{saleId}/refunds
 
 ### Phase 9 — Reports
 
-- [ ] Daily sales total
-- [ ] Monthly sales total
-- [ ] Top-selling products
-- [ ] Low-stock products
-- [ ] Sales by cashier
-- [ ] Payment method summary
-- [ ] Add tests for report queries
+- [x] Daily sales total
+- [x] Monthly sales total
+- [x] Top-selling products
+- [x] Low-stock products
+- [x] Sales by cashier
+- [x] Payment method summary
+- [x] Add tests for report queries
 
-Endpoints planned:
+Endpoints implemented:
 
 ```http
-GET /api/reports/daily-sales
-GET /api/reports/monthly-sales
+GET /api/reports/daily-sales?date=YYYY-MM-DD
+GET /api/reports/monthly-sales?year=YYYY&month=M
 GET /api/reports/top-products
 GET /api/reports/low-stock
+GET /api/reports/sales-by-cashier
 GET /api/reports/payment-summary
 ```
 
