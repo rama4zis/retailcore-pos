@@ -4,7 +4,7 @@ This file is the compact handoff state for future sessions. Treat `README.md` an
 
 ## Current Checkpoint
 
-Next recommended work: start Phase 3 inventory.
+Next recommended work: start Phase 4 authentication and authorization.
 
 ## Phase 0 — Project Baseline
 
@@ -121,21 +121,49 @@ Verification:
 
 ## Phase 3 — Inventory Module
 
-Status: Not started
+Status: Done
 
-Planned next after Phase 2 cleanup:
+Implemented:
+- `inventory` feature package
 - `InventoryStockEntity`
 - `StockMovementEntity`
-- inventory migrations
-- inventory repositories
-- inventory DTOs
+- `StockMovementType`
+- Flyway migration: `V4__create_inventory_tables.sql`
+- Inventory repositories:
+  - `InventoryStockRepository`
+  - `StockMovementRepository`
+- Inventory DTOs:
+  - `StockAdjustmentRequest`
+  - `InventoryStockResponse`
+  - `StockMovementResponse`
 - `InventoryService`
 - `InventoryController`
-- negative-stock protection
-- stock movement creation for every adjustment
-- stock adjustment endpoint
-- low-stock query
-- tests
+- Negative-stock protection
+- Stock movement creation for every adjustment
+- Stock adjustment endpoint
+- Low-stock query endpoint
+- Inventory service tests and controller tests
+
+Endpoints implemented:
+
+```http
+GET  /api/inventory
+GET  /api/inventory/low-stock
+GET  /api/inventory/{productId}
+POST /api/inventory/{productId}/adjust
+GET  /api/inventory/{productId}/movements
+```
+
+Verification:
+- `./mvnw test` passed.
+- Manual API checks passed on port `18080`:
+  - `POST /api/categories` returned `201` for setup data
+  - `POST /api/products` returned `201` for setup data
+  - `POST /api/inventory/{productId}/adjust` returned `200`
+  - `GET /api/inventory/{productId}` returned `200`
+  - `GET /api/inventory/{productId}/movements` returned `200`
+  - negative stock adjustment returned `409`
+  - `GET /api/inventory/low-stock` returned `200`
 
 ## Session Handoff Prompt
 

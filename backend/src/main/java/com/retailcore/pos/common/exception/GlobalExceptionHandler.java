@@ -2,6 +2,8 @@ package com.retailcore.pos.common.exception;
 
 import com.retailcore.pos.category.exception.CategoryInUseException;
 import com.retailcore.pos.common.dto.ApiErrorResponse;
+import com.retailcore.pos.inventory.InvalidStockAdjustmentException;
+import com.retailcore.pos.inventory.NegativeStockException;
 import com.retailcore.pos.common.dto.FieldErrorResponse;
 import java.util.Comparator;
 import java.util.List;
@@ -26,6 +28,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CategoryInUseException.class)
     ResponseEntity<ApiErrorResponse> handleCategoryInUse(CategoryInUseException exception) {
+        return error(HttpStatus.CONFLICT, exception.getMessage());
+    }
+
+    @ExceptionHandler({NegativeStockException.class, InvalidStockAdjustmentException.class})
+    ResponseEntity<ApiErrorResponse> handleInventoryConflict(RuntimeException exception) {
         return error(HttpStatus.CONFLICT, exception.getMessage());
     }
 

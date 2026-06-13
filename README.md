@@ -85,7 +85,7 @@ Planned later:
 - [x] Verify backend starts against local PostgreSQL
 - [ ] Build category module
 - [ ] Build product module
-- [ ] Build inventory module
+- [x] Build inventory module
 - [ ] Build authentication module
 - [ ] Build sales checkout module
 - [ ] Build payment handling
@@ -195,19 +195,19 @@ PATCH  /api/products/{id}/active
 
 ### Phase 3 — Inventory Module
 
-- [ ] Create `inventory` package
-- [ ] Create `InventoryStock` entity
-- [ ] Create `StockMovement` entity
-- [ ] Create migrations for inventory tables
-- [ ] Create inventory repositories
-- [ ] Create inventory DTOs
-- [ ] Create `InventoryService`
-- [ ] Create `InventoryController`
-- [ ] Prevent negative stock
-- [ ] Record every stock movement
-- [ ] Add stock adjustment endpoint
-- [ ] Add low-stock query
-- [ ] Add tests
+- [x] Create `inventory` package
+- [x] Create `InventoryStock` entity
+- [x] Create `StockMovement` entity
+- [x] Create migrations for inventory tables
+- [x] Create inventory repositories
+- [x] Create inventory DTOs
+- [x] Create `InventoryService`
+- [x] Create `InventoryController`
+- [x] Prevent negative stock
+- [x] Record every stock movement
+- [x] Add stock adjustment endpoint
+- [x] Add low-stock query
+- [x] Add tests
 
 Endpoints planned:
 
