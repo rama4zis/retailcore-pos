@@ -70,6 +70,10 @@ public class StockMovementEntity {
         return new StockMovementEntity(product, StockMovementType.SALE, quantityChange, stockAfter, reason);
     }
 
+    public static StockMovementEntity refund(ProductEntity product, int quantityChange, int stockAfter, String reason) {
+        return new StockMovementEntity(product, StockMovementType.REFUND, quantityChange, stockAfter, reason);
+    }
+
     @PrePersist
     void onCreate() {
         this.createdAt = Instant.now();

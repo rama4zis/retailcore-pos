@@ -1,11 +1,9 @@
-package com.retailcore.pos.sale;
+package com.retailcore.pos.refund;
 
-import com.retailcore.pos.user.UserEntity;
+import com.retailcore.pos.sale.SaleEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,31 +23,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "sales")
+@Table(name = "refunds")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SaleEntity {
+public class RefundEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 80)
-    private String saleNumber;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "cashier_id", nullable = false)
-    private UserEntity cashier;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 40)
-    private SaleStatus status;
+    @JoinColumn(name = "sale_id", nullable = false)
+    private SaleEntity sale;
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
 
+    @Column(length = 500)
+    private String reason;
+
     @Column(nullable = false)
-    private Instant completedAt;
+    private Instant refundedAt;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
@@ -57,33 +51,24 @@ public class SaleEntity {
     @Column(nullable = false)
     private Instant updatedAt;
 
-    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SaleItemEntity> items = new ArrayList<>();
+    @OneToMany(mappedBy = "refund", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefundItemEntity> items = new ArrayList<>();
 
-    private SaleEntity(UserEntity cashier, List<SaleItemEntity> items) {
-        this.saleNumber = SaleNumberGenerator.next();
-        this.cashier = cashier;
-        this.status = SaleStatus.COMPLETED;
-        this.completedAt = Instant.now();
+    private RefundEntity(SaleEntity sale, List<RefundItemEntity> items, String reason) {
+        this.sale = sale;
+        this.reason = normalizeOptional(reason);
+        this.refundedAt = Instant.now();
         items.forEach(this::addItem);
         this.totalAmount = this.items.stream()
-                .map(SaleItemEntity::getLineTotal)
+                .map(RefundItemEntity::getLineTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public static SaleEntity complete(UserEntity cashier, List<SaleItemEntity> items) {
-        return new SaleEntity(cashier, items);
+    public static RefundEntity create(SaleEntity sale, List<RefundItemEntity> items, String reason) {
+        return new RefundEntity(sale, items, reason);
     }
 
-    public void markPartiallyRefunded() {
-        this.status = SaleStatus.PARTIALLY_REFUNDED;
-    }
-
-    public void markRefunded() {
-        this.status = SaleStatus.REFUNDED;
-    }
-
-    private void addItem(SaleItemEntity item) {
+    private void addItem(RefundItemEntity item) {
         item.attachTo(this);
         this.items.add(item);
     }
@@ -98,5 +83,9 @@ public class SaleEntity {
     @PreUpdate
     void onUpdate() {
         this.updatedAt = Instant.now();
+    }
+
+    private static String normalizeOptional(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
     }
 }

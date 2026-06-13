@@ -14,6 +14,12 @@ import com.retailcore.pos.payment.PaymentMethod;
 import com.retailcore.pos.receipt.dto.ReceiptItemResponse;
 import com.retailcore.pos.receipt.dto.ReceiptPaymentResponse;
 import com.retailcore.pos.receipt.dto.ReceiptResponse;
+import com.retailcore.pos.refund.RefundQuantityExceededException;
+import com.retailcore.pos.refund.RefundService;
+import com.retailcore.pos.refund.dto.RefundItemRequest;
+import com.retailcore.pos.refund.dto.RefundItemResponse;
+import com.retailcore.pos.refund.dto.RefundRequest;
+import com.retailcore.pos.refund.dto.RefundResponse;
 import com.retailcore.pos.sale.dto.CheckoutItemRequest;
 import com.retailcore.pos.sale.dto.CheckoutPaymentRequest;
 import com.retailcore.pos.sale.dto.CheckoutRequest;
@@ -47,6 +53,9 @@ class SaleControllerTest {
 
     @MockitoBean
     private SaleService saleService;
+
+    @MockitoBean
+    private RefundService refundService;
 
     @Test
     void checkoutRequiresItems() throws Exception {
@@ -111,6 +120,49 @@ class SaleControllerTest {
     }
 
     @Test
+    void refundRequiresItems() throws Exception {
+        RefundRequest request = new RefundRequest(List.of(), null);
+
+        mockMvc.perform(post("/api/sales/50/refunds")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.fieldErrors[0].field").value("items"));
+    }
+
+    @Test
+    void refundReturnsCreatedRefund() throws Exception {
+        when(refundService.refund(any(Long.class), any(RefundRequest.class))).thenReturn(refundResponse());
+        RefundRequest request = refundRequest();
+
+        mockMvc.perform(post("/api/sales/50/refunds")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(80L))
+                .andExpect(jsonPath("$.saleId").value(50L))
+                .andExpect(jsonPath("$.saleStatus").value("PARTIALLY_REFUNDED"))
+                .andExpect(jsonPath("$.totalAmount").value(3500.00))
+                .andExpect(jsonPath("$.items[0].quantity").value(1));
+
+        verify(refundService).refund(any(Long.class), any(RefundRequest.class));
+    }
+
+    @Test
+    void refundReturnsConflictWhenQuantityExceedsSoldQuantity() throws Exception {
+        when(refundService.refund(any(Long.class), any(RefundRequest.class)))
+                .thenThrow(new RefundQuantityExceededException(10L, 3, 2));
+
+        mockMvc.perform(post("/api/sales/50/refunds")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(refundRequest())))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(
+                        "Refund quantity for product id 10 exceeds sold quantity: requested 3, refundable 2"));
+    }
+
+    @Test
     void findAllReturnsSales() throws Exception {
         when(saleService.findAll()).thenReturn(List.of(saleResponse()));
 
@@ -146,6 +198,31 @@ class SaleControllerTest {
                 PaymentMethod.CASH,
                 new BigDecimal("7000.00"),
                 new BigDecimal("10000.00")
+        );
+    }
+
+    private static RefundRequest refundRequest() {
+        return new RefundRequest(List.of(new RefundItemRequest(10L, 1)), "Customer return");
+    }
+
+    private static RefundResponse refundResponse() {
+        return new RefundResponse(
+                80L,
+                50L,
+                "SALE-001",
+                SaleStatus.PARTIALLY_REFUNDED,
+                new BigDecimal("3500.00"),
+                "Customer return",
+                Instant.parse("2026-01-01T00:00:00Z"),
+                List.of(new RefundItemResponse(
+                        90L,
+                        10L,
+                        "SKU-001",
+                        "Mineral Water",
+                        1,
+                        new BigDecimal("3500.00"),
+                        new BigDecimal("3500.00")
+                ))
         );
     }
 

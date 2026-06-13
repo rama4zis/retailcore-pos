@@ -1,6 +1,9 @@
 package com.retailcore.pos.sale;
 
 import com.retailcore.pos.receipt.dto.ReceiptResponse;
+import com.retailcore.pos.refund.RefundService;
+import com.retailcore.pos.refund.dto.RefundRequest;
+import com.retailcore.pos.refund.dto.RefundResponse;
 import com.retailcore.pos.sale.dto.CheckoutRequest;
 import com.retailcore.pos.sale.dto.SaleResponse;
 import jakarta.validation.Valid;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SaleController {
 
     private final SaleService saleService;
+    private final RefundService refundService;
 
     @PostMapping("/checkout")
     public ResponseEntity<ReceiptResponse> checkout(
@@ -32,6 +36,15 @@ public class SaleController {
     ) {
         ReceiptResponse response = saleService.checkout(principal.getName(), request);
         return ResponseEntity.created(URI.create("/api/sales/" + response.saleId())).body(response);
+    }
+
+    @PostMapping("/{id}/refunds")
+    public ResponseEntity<RefundResponse> refund(
+            @PathVariable Long id,
+            @Valid @RequestBody RefundRequest request
+    ) {
+        RefundResponse response = refundService.refund(id, request);
+        return ResponseEntity.created(URI.create("/api/sales/" + id + "/refunds/" + response.id())).body(response);
     }
 
     @GetMapping

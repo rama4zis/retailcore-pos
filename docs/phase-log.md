@@ -4,7 +4,7 @@ This file is the compact handoff state for future sessions. Treat `README.md` an
 
 ## Current Checkpoint
 
-Next recommended work: start Phase 8 refunds.
+Next recommended work: start Phase 9 reports.
 
 ## Phase 0 — Project Baseline
 
@@ -310,6 +310,39 @@ POST /api/sales/checkout
 
 Verification:
 - Focused receipt/checkout tests passed: `./mvnw -Dtest=SaleServiceTest,SaleControllerTest test` with 12 tests, 0 failures, 0 errors.
+
+## Phase 8 — Refunds
+
+Status: Done
+
+Implemented:
+- `refund` feature package
+- `RefundEntity`
+- `RefundItemEntity`
+- Flyway migration: `V8__create_refunds_tables.sql`
+- `RefundRepository`
+- Refund DTOs:
+  - `RefundRequest`
+  - `RefundItemRequest`
+  - `RefundResponse`
+  - `RefundItemResponse`
+- `RefundService`
+- Refund endpoint added under `SaleController`
+- Refund amount protection against exceeding original sale total
+- Refund quantity protection against sold/remaining quantity per product
+- `REFUND` stock movement records for returned items
+- Sale status updates to `PARTIALLY_REFUNDED` or `REFUNDED`
+- Refund service tests and sale controller refund tests
+
+Endpoint implemented:
+
+```http
+POST /api/sales/{saleId}/refunds
+```
+
+Verification:
+- Focused refund tests passed: `./mvnw -Dtest=RefundServiceTest,SaleControllerTest test` with 14 tests, 0 failures, 0 errors.
+- Full backend test suite passed: `./mvnw test` with 109 tests, 0 failures, 0 errors.
 
 ## Session Handoff Prompt
 

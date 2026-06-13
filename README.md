@@ -302,13 +302,13 @@ CARD
 
 ### Phase 8 — Refunds
 
-- [ ] Create `RefundEntity`
-- [ ] Create refund endpoint
-- [ ] Prevent refund amount above original sale amount
-- [ ] Prevent refund quantity above sold quantity
-- [ ] Add stock movement for returned items
-- [ ] Mark sale as partially refunded or refunded
-- [ ] Add tests
+- [x] Create `RefundEntity`
+- [x] Create refund endpoint
+- [x] Prevent refund amount above original sale amount
+- [x] Prevent refund quantity above sold quantity
+- [x] Add stock movement for returned items
+- [x] Mark sale as partially refunded or refunded
+- [x] Add tests
 
 Endpoint planned:
 
