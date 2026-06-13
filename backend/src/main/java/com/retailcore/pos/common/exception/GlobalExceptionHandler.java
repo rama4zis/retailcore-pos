@@ -7,6 +7,9 @@ import com.retailcore.pos.common.dto.ApiErrorResponse;
 import com.retailcore.pos.inventory.InvalidStockAdjustmentException;
 import com.retailcore.pos.inventory.NegativeStockException;
 import com.retailcore.pos.common.dto.FieldErrorResponse;
+import com.retailcore.pos.payment.CardCashTenderedException;
+import com.retailcore.pos.payment.InsufficientCashTenderedException;
+import com.retailcore.pos.payment.PaymentAmountMismatchException;
 import com.retailcore.pos.sale.InactiveProductSaleException;
 import com.retailcore.pos.sale.InsufficientStockException;
 import java.util.Comparator;
@@ -39,7 +42,10 @@ public class GlobalExceptionHandler {
             NegativeStockException.class,
             InvalidStockAdjustmentException.class,
             InsufficientStockException.class,
-            InactiveProductSaleException.class
+            InactiveProductSaleException.class,
+            PaymentAmountMismatchException.class,
+            InsufficientCashTenderedException.class,
+            CardCashTenderedException.class
     })
     ResponseEntity<ApiErrorResponse> handleInventoryConflict(RuntimeException exception) {
         return error(HttpStatus.CONFLICT, exception.getMessage());

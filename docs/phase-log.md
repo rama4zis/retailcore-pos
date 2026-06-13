@@ -4,7 +4,7 @@ This file is the compact handoff state for future sessions. Treat `README.md` an
 
 ## Current Checkpoint
 
-Next recommended work: start Phase 6 payment handling.
+Next recommended work: start Phase 7 receipt response.
 
 ## Phase 0 — Project Baseline
 
@@ -248,6 +248,40 @@ GET  /api/sales/{id}
 Verification:
 - Focused sale tests passed: `./mvnw -Dtest=SaleServiceTest,SaleControllerTest test` with 11 tests, 0 failures, 0 errors.
 - Full backend test suite passed: `./mvnw test` with 87 tests, 0 failures, 0 errors.
+
+## Phase 6 — Payment Handling
+
+Status: Done
+
+Implemented:
+- `payment` feature package
+- `PaymentEntity`
+- `PaymentMethod` enum with `CASH` and `CARD`
+- Flyway migration: `V7__create_payments_table.sql`
+- `PaymentRepository`
+- Payment DTOs:
+  - `PaymentCreateRequest`
+  - `PaymentResponse`
+- `PaymentService`
+- `PaymentController`
+- Cash payment support with required cash tendered and change calculation
+- Card payment support with zero change and no cash tendered
+- Payment amount validation against sale total
+- Duplicate payment protection per sale
+- Payment conflict exceptions for amount mismatch, insufficient cash tendered, and card cash tendered
+- Payment service tests and controller tests
+
+Endpoints implemented:
+
+```http
+POST /api/payments
+GET  /api/payments
+GET  /api/payments/{id}
+```
+
+Verification:
+- Focused payment tests passed: `./mvnw -Dtest=PaymentServiceTest,PaymentControllerTest test` with 13 tests, 0 failures, 0 errors.
+- Full backend test suite passed: `./mvnw test` with 100 tests, 0 failures, 0 errors.
 
 ## Session Handoff Prompt
 

@@ -88,7 +88,7 @@ Planned later:
 - [x] Build inventory module
 - [x] Build authentication module
 - [x] Build sales checkout module
-- [ ] Build payment handling
+- [x] Build payment handling
 - [ ] Build receipt response
 - [ ] Build reporting endpoints
 - [ ] Build frontend
@@ -272,14 +272,14 @@ GET  /api/sales/{id}
 
 ### Phase 6 — Payment Handling
 
-- [ ] Create `payment` package
-- [ ] Create `Payment` entity
-- [ ] Add migration for payments table
-- [ ] Support cash payment
-- [ ] Support card payment
-- [ ] Validate payment total equals sale total
-- [ ] Support cash tendered/change calculation
-- [ ] Add tests
+- [x] Create `payment` package
+- [x] Create `Payment` entity
+- [x] Add migration for payments table
+- [x] Support cash payment
+- [x] Support card payment
+- [x] Validate payment total equals sale total
+- [x] Support cash tendered/change calculation
+- [x] Add tests
 
 Payment methods for MVP:
 
