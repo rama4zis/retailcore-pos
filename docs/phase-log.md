@@ -4,7 +4,7 @@ This file is the compact handoff state for future sessions. Treat `README.md` an
 
 ## Current Checkpoint
 
-Next recommended work: tighten Phase 2 product tests, then move to Phase 3 inventory.
+Next recommended work: start Phase 3 inventory.
 
 ## Phase 0 — Project Baseline
 
@@ -78,7 +78,7 @@ Commit:
 
 ## Phase 2 — Product Module
 
-Status: Mostly done, needs checkpoint cleanup
+Status: Done
 
 Implemented:
 - `product` feature package
@@ -96,7 +96,7 @@ Implemented:
 - Barcode uniqueness rule
 - Positive price validation
 - Active/inactive product status
-- Product service tests and partial controller tests
+- Product service tests and controller tests
 
 Endpoints implemented:
 
@@ -108,17 +108,16 @@ PUT    /api/products/{id}
 PATCH  /api/products/{id}/active
 ```
 
-Known cleanup before marking fully done:
-- Add/verify controller tests for:
-  - `GET /api/products`
-  - `GET /api/products/{id}`
-  - `PUT /api/products/{id}`
-- Add/verify service tests for:
-  - update duplicate SKU
-  - update duplicate barcode
-  - product not found paths
-- Run manual API checks for all product endpoints.
-- Update `README.md` Phase 2 checklist only after tests and manual checks pass.
+Verification:
+- `./mvnw test` passed.
+- Manual API checks passed on port `18080`:
+  - `POST /api/products` returned `201`
+  - duplicate SKU create returned `409`
+  - duplicate barcode create returned `409`
+  - `GET /api/products` returned `200`
+  - `GET /api/products/{id}` returned `200`
+  - `PUT /api/products/{id}` returned `200`
+  - `PATCH /api/products/{id}/active` returned `200`
 
 ## Phase 3 — Inventory Module
 

@@ -169,19 +169,19 @@ DELETE /api/categories/{id}
 
 ### Phase 2 — Product Module
 
-- [ ] Create `product` package
-- [ ] Create `Product` entity
-- [ ] Create Flyway migration for `products` table
-- [ ] Create `ProductRepository`
-- [ ] Create product DTOs
-- [ ] Create `ProductService`
-- [ ] Create `ProductController`
-- [ ] Add SKU uniqueness rule
-- [ ] Add barcode uniqueness rule
-- [ ] Add positive price validation
-- [ ] Add active/inactive product status
-- [ ] Add tests
-- [ ] Manually test API endpoints
+- [x] Create `product` package
+- [x] Create `Product` entity
+- [x] Create Flyway migration for `products` table
+- [x] Create `ProductRepository`
+- [x] Create product DTOs
+- [x] Create `ProductService`
+- [x] Create `ProductController`
+- [x] Add SKU uniqueness rule
+- [x] Add barcode uniqueness rule
+- [x] Add positive price validation
+- [x] Add active/inactive product status
+- [x] Add tests
+- [x] Manually test API endpoints
 
 Endpoints planned:
 
