@@ -86,7 +86,7 @@ Planned later:
 - [ ] Build category module
 - [ ] Build product module
 - [x] Build inventory module
-- [ ] Build authentication module
+- [x] Build authentication module
 - [ ] Build sales checkout module
 - [ ] Build payment handling
 - [ ] Build receipt response
@@ -220,19 +220,19 @@ GET  /api/inventory/{productId}/movements
 
 ### Phase 4 — Authentication and Authorization
 
-- [ ] Create `auth` package
-- [ ] Create `user` package
-- [ ] Add Spring Security config
-- [ ] Add BCrypt password hashing
-- [ ] Add JWT token generation
-- [ ] Add JWT authentication filter
-- [ ] Create user entity
-- [ ] Create role enum
-- [ ] Create login endpoint
-- [ ] Create current-user endpoint
-- [ ] Add admin-only user management
-- [ ] Add method-level authorization
-- [ ] Add security tests
+- [x] Create `auth` package
+- [x] Create `user` package
+- [x] Add Spring Security config
+- [x] Add BCrypt password hashing
+- [x] Add JWT token generation
+- [x] Add JWT authentication filter
+- [x] Create user entity
+- [x] Create role enum
+- [x] Create login endpoint
+- [x] Create current-user endpoint
+- [x] Add admin-only user management
+- [x] Add method-level authorization
+- [x] Add security tests
 
 Endpoints planned:
 

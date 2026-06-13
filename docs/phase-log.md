@@ -4,7 +4,7 @@ This file is the compact handoff state for future sessions. Treat `README.md` an
 
 ## Current Checkpoint
 
-Next recommended work: start Phase 4 authentication and authorization.
+Next recommended work: start Phase 5 sales checkout.
 
 ## Phase 0 — Project Baseline
 
@@ -164,6 +164,50 @@ Verification:
   - `GET /api/inventory/{productId}/movements` returned `200`
   - negative stock adjustment returned `409`
   - `GET /api/inventory/low-stock` returned `200`
+
+## Phase 4 — Authentication and Authorization
+
+Status: Done
+
+Implemented:
+- `auth` feature package
+- `user` feature package
+- `UserEntity`
+- `UserRole` enum with `ADMIN`, `MANAGER`, and `CASHIER`
+- Flyway migration: `V5__create_users_table.sql`
+- `UserRepository`
+- User DTOs:
+  - `UserCreateRequest`
+  - `UserRoleRequest`
+  - `UserActiveRequest`
+  - `UserResponse`
+- Auth DTOs:
+  - `LoginRequest`
+  - `AuthResponse`
+- `UserService`
+- `AuthService`
+- `JwtService`
+- `JwtAuthenticationFilter`
+- Spring Security config with stateless JWT authentication
+- BCrypt password hashing
+- Login endpoint
+- Current-user endpoint
+- Admin-only user management endpoints using method-level authorization
+- Auth and user service/controller tests
+
+Endpoints implemented:
+
+```http
+POST  /api/auth/login
+GET   /api/auth/me
+POST  /api/users
+GET   /api/users
+PATCH /api/users/{id}/role
+PATCH /api/users/{id}/active
+```
+
+Verification:
+- `./mvnw test` passed with 76 tests, 0 failures, 0 errors.
 
 ## Session Handoff Prompt
 

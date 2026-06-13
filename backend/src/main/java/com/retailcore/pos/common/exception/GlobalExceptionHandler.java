@@ -1,6 +1,8 @@
 package com.retailcore.pos.common.exception;
 
 import com.retailcore.pos.category.exception.CategoryInUseException;
+import com.retailcore.pos.auth.InactiveUserException;
+import com.retailcore.pos.auth.InvalidCredentialsException;
 import com.retailcore.pos.common.dto.ApiErrorResponse;
 import com.retailcore.pos.inventory.InvalidStockAdjustmentException;
 import com.retailcore.pos.inventory.NegativeStockException;
@@ -34,6 +36,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({NegativeStockException.class, InvalidStockAdjustmentException.class})
     ResponseEntity<ApiErrorResponse> handleInventoryConflict(RuntimeException exception) {
         return error(HttpStatus.CONFLICT, exception.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    ResponseEntity<ApiErrorResponse> handleInvalidCredentials(InvalidCredentialsException exception) {
+        return error(HttpStatus.UNAUTHORIZED, exception.getMessage());
+    }
+
+    @ExceptionHandler(InactiveUserException.class)
+    ResponseEntity<ApiErrorResponse> handleInactiveUser(InactiveUserException exception) {
+        return error(HttpStatus.FORBIDDEN, exception.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
