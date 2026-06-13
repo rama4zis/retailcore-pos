@@ -302,7 +302,7 @@ CARD
 
 ### Phase 8 — Refunds
 
-- [ ] Create refund model
+- [ ] Create `RefundEntity`
 - [ ] Create refund endpoint
 - [ ] Prevent refund amount above original sale amount
 - [ ] Prevent refund quantity above sold quantity
@@ -365,22 +365,52 @@ Planned URL:
 
 ## Backend Package Structure
 
-Use feature-based packages:
+Use feature-based packages. The project is small, but POS systems grow naturally by business feature: category, product, inventory, sale, payment, receipt, and report.
 
 ```text
 com.retailcore.pos
-  auth
-  user
   category
+    CategoryEntity.java
+    CategoryRepository.java
+    exception/
+      CategoryNotFoundException.java
+
   product
+    ProductController.java
+    ProductService.java
+    ProductRepository.java
+    ProductEntity.java
+    ProductDetails.java
+    dto/
+      ProductCreateRequest.java
+      ProductUpdateRequest.java
+      ProductActiveRequest.java
+      ProductResponse.java
+    exception/
+      ProductNotFoundException.java
+      DuplicateProductSkuException.java
+      DuplicateProductBarcodeException.java
+
   inventory
   sale
   payment
   receipt
   report
+
   common
+    dto/
+    exception/
+
   config
 ```
+
+Naming standard:
+
+- JPA/database-mapped classes use `*Entity`, for example `ProductEntity`.
+- API request/response classes live in feature-local `dto/` packages.
+- Feature-specific exceptions stay inside the feature package.
+- Cross-feature API errors and base exceptions stay in `common/`.
+- Avoid vague `model/` packages. `model` can mean entity, DTO, MVC model, view model, or ML model.
 
 Avoid layer-only package structure like this:
 
@@ -392,7 +422,7 @@ entity
 dto
 ```
 
-Feature-based packages scale better when the project grows.
+Layer-based structure is acceptable for tiny tutorials, but feature-based structure is the project standard because it scales better and keeps each business capability together.
 
 ## Development Workflow Per Module
 
