@@ -3,7 +3,9 @@ package com.retailcore.pos.product.dto;
 import com.retailcore.pos.product.ProductEntity;
 import java.math.BigDecimal;
 import java.time.Instant;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Product catalog item response.")
 public record ProductResponse(
         Long id,
         Long categoryId,

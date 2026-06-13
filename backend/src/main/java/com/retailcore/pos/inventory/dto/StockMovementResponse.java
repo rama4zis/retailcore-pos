@@ -3,7 +3,9 @@ package com.retailcore.pos.inventory.dto;
 import com.retailcore.pos.inventory.StockMovementEntity;
 import com.retailcore.pos.inventory.StockMovementType;
 import java.time.Instant;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Stock movement history response.")
 public record StockMovementResponse(
         Long id,
         Long productId,

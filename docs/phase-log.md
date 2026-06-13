@@ -4,7 +4,7 @@ This file is the compact handoff state for future sessions. Treat `README.md` an
 
 ## Current Checkpoint
 
-Next recommended work: start Phase 10 API documentation.
+Next recommended work: start Phase 11 frontend.
 
 ## Phase 0 — Project Baseline
 
@@ -380,6 +380,32 @@ GET /api/reports/payment-summary
 Verification:
 - Focused report tests passed: `./mvnw -Dtest=ReportServiceTest,ReportControllerTest test` with 14 tests, 0 failures, 0 errors.
 - Full backend test suite passed: `./mvnw test` with 123 tests, 0 failures, 0 errors.
+
+## Phase 10 — API Documentation
+
+Status: Done
+
+Implemented:
+- `OpenApiConfig` with RetailCore POS API metadata
+- JWT bearer security scheme named `bearerAuth`
+- Swagger UI configuration in `application.yaml`
+- OpenAPI tags and operation summaries for authentication, users, categories, products, inventory, sales, payments, and reports
+- Schema descriptions for main request/response DTOs, including errors, receipts, refunds, and report responses
+- OpenAPI config tests and API documentation integration tests
+
+Endpoints verified:
+
+```http
+GET /v3/api-docs
+GET /swagger-ui.html
+```
+
+Verification:
+- Focused API documentation tests passed: `./mvnw -Dtest=OpenApiConfigTest,OpenApiDocumentationIntegrationTest test` with 4 tests, 0 failures, 0 errors.
+- Full backend test suite passed: `./mvnw test` with 127 tests, 0 failures, 0 errors.
+- Manual API documentation checks passed on port `18080`:
+  - `GET /swagger-ui.html` returned `302` to `/swagger-ui/index.html`
+  - `GET /v3/api-docs` returned `RetailCore POS API` metadata, module tags, `bearerAuth`, and main schemas
 
 ## Session Handoff Prompt
 

@@ -4,7 +4,9 @@ import com.retailcore.pos.payment.PaymentEntity;
 import com.retailcore.pos.payment.PaymentMethod;
 import java.math.BigDecimal;
 import java.time.Instant;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Receipt payment summary response.")
 public record ReceiptPaymentResponse(
         PaymentMethod method,
         BigDecimal amount,
@@ -23,3 +25,4 @@ public record ReceiptPaymentResponse(
         );
     }
 }
+

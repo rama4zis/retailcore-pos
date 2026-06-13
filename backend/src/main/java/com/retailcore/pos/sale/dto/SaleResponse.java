@@ -5,7 +5,9 @@ import com.retailcore.pos.sale.SaleStatus;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Sale history response.")
 public record SaleResponse(
         Long id,
         String saleNumber,
@@ -30,3 +32,4 @@ public record SaleResponse(
         );
     }
 }
+

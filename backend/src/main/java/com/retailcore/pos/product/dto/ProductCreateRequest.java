@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Request to create a product catalog item.")
 public record ProductCreateRequest(
         @NotNull(message = "Category id is required")
         Long categoryId,

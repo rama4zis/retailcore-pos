@@ -5,7 +5,9 @@ import com.retailcore.pos.sale.SaleEntity;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Receipt response returned after checkout.")
 public record ReceiptResponse(
         Long saleId,
         String saleNumber,
@@ -30,3 +32,4 @@ public record ReceiptResponse(
         );
     }
 }
+

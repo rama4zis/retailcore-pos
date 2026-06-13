@@ -339,10 +339,10 @@ GET /api/reports/payment-summary
 
 ### Phase 10 — API Documentation
 
-- [ ] Add Springdoc OpenAPI
-- [ ] Configure Swagger UI
-- [ ] Document main request/response DTOs
-- [ ] Verify Swagger page loads
+- [x] Add Springdoc OpenAPI
+- [x] Configure Swagger UI
+- [x] Document main request/response DTOs
+- [x] Verify Swagger page loads
 
 Planned URL:
 

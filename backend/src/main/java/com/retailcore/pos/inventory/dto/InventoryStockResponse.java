@@ -2,7 +2,9 @@ package com.retailcore.pos.inventory.dto;
 
 import com.retailcore.pos.inventory.InventoryStockEntity;
 import java.time.Instant;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Product inventory stock response.")
 public record InventoryStockResponse(
         Long productId,
         String sku,

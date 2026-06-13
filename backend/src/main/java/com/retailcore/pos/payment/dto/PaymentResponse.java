@@ -4,7 +4,9 @@ import com.retailcore.pos.payment.PaymentEntity;
 import com.retailcore.pos.payment.PaymentMethod;
 import java.math.BigDecimal;
 import java.time.Instant;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Payment response with tendered cash and change details.")
 public record PaymentResponse(
         Long id,
         Long saleId,
@@ -29,3 +31,4 @@ public record PaymentResponse(
         );
     }
 }
+

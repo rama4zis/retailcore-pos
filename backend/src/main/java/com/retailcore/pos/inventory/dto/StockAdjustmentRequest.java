@@ -3,7 +3,9 @@ package com.retailcore.pos.inventory.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Request to adjust product stock and optionally update the low-stock threshold.")
 public record StockAdjustmentRequest(
         @NotNull(message = "Quantity change is required")
         Integer quantityChange,
