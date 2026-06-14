@@ -197,57 +197,59 @@ Frontend rules:
 
 - Display `message` for general API errors.
 - Map `fieldErrors` to inline form errors when field names match.
-- `400`: validation error.
-- `401`: unauthenticated/expired token.
-- `403`: authenticated but wrong role/inactive access.
-- `404`: missing record.
+- `400`: request-body validation error from `MethodArgumentNotValidException`.
+- `401`: unauthenticated/expired token from security entry point.
+- `403`: authenticated but wrong role/inactive login.
+- `404`: missing record from `ResourceNotFoundException`.
 - `409`: business conflict, e.g. duplicate SKU, negative stock, insufficient stock, invalid refund.
+- OpenAPI currently exposes success schemas but not `ApiErrorResponse`; use `backend/src/main/java/com/retailcore/pos/common/dto` as the source of truth for error types.
+- Report endpoints require their documented query params. Current backend framework-level query-param errors are not normalized by `GlobalExceptionHandler`, so avoid generating malformed report requests in the frontend.
 - Network error with no HTTP response is often CORS or backend down. Do not rewrite auth first.
 
 ---
 
 ## Current Backend API Map
 
-Verify with OpenAPI before implementation, but this is the current Phase 10 map.
+Verified in FE-00 from backend controllers and `/v3/api-docs`. `Access` means backend-enforced access from `SecurityConfig` and controller `@PreAuthorize`; frontend navigation may still be stricter by product UX.
 
-| Area | Method + Path | Frontend use |
-|---|---|---|
-| Auth | `POST /api/auth/login` | Login |
-| Auth | `GET /api/auth/me` | Restore current session |
-| Categories | `POST /api/categories` | Create category |
-| Categories | `GET /api/categories` | Category list/select options |
-| Categories | `GET /api/categories/{id}` | Category detail/edit preload |
-| Categories | `PUT /api/categories/{id}` | Update category |
-| Categories | `DELETE /api/categories/{id}` | Delete category |
-| Products | `POST /api/products` | Create product |
-| Products | `GET /api/products` | Product list/search/checkout picker |
-| Products | `GET /api/products/{id}` | Product detail/edit preload |
-| Products | `PUT /api/products/{id}` | Update product |
-| Products | `PATCH /api/products/{id}/active` | Enable/disable product |
-| Inventory | `GET /api/inventory` | Stock list |
-| Inventory | `GET /api/inventory/low-stock` | Low-stock alert/report |
-| Inventory | `GET /api/inventory/{productId}` | Product stock detail |
-| Inventory | `POST /api/inventory/{productId}/adjust` | Stock adjustment |
-| Inventory | `GET /api/inventory/{productId}/movements` | Stock movement history |
-| Sales | `POST /api/sales/checkout` | Checkout + receipt response |
-| Sales | `GET /api/sales` | Sales history |
-| Sales | `GET /api/sales/{id}` | Sale detail |
-| Sales | `POST /api/sales/{id}/refunds` | Refund sale items |
-| Payments | `POST /api/payments` | Standalone payment creation if needed |
-| Payments | `GET /api/payments` | Payment list/admin view if needed |
-| Payments | `GET /api/payments/{id}` | Payment detail if needed |
-| Reports | `GET /api/reports/daily-sales?date=YYYY-MM-DD` | Daily total card |
-| Reports | `GET /api/reports/monthly-sales?year=YYYY&month=M` | Monthly total card |
-| Reports | `GET /api/reports/top-products` | Top products table/chart |
-| Reports | `GET /api/reports/low-stock` | Low-stock report |
-| Reports | `GET /api/reports/sales-by-cashier` | Cashier performance |
-| Reports | `GET /api/reports/payment-summary` | Payment method summary |
-| Users | `POST /api/users` | Admin creates user |
-| Users | `GET /api/users` | Admin user list |
-| Users | `PATCH /api/users/{id}/role` | Admin changes role |
-| Users | `PATCH /api/users/{id}/active` | Admin activates/deactivates user |
+| Area | Method + Path | Access | Success shape | Frontend use |
+|---|---|---|---|---|
+| Auth | `POST /api/auth/login` | Public | `AuthResponse` | Login |
+| Auth | `GET /api/auth/me` | Authenticated | `UserResponse` | Restore current session |
+| Categories | `POST /api/categories` | Authenticated | `201 CategoryResponse` | Create category |
+| Categories | `GET /api/categories` | Authenticated | `CategoryResponse[]` | Category list/select options |
+| Categories | `GET /api/categories/{id}` | Authenticated | `CategoryResponse` | Category detail/edit preload |
+| Categories | `PUT /api/categories/{id}` | Authenticated | `CategoryResponse` | Update category |
+| Categories | `DELETE /api/categories/{id}` | Authenticated | `204` no body | Delete category |
+| Products | `POST /api/products` | Authenticated | `201 ProductResponse` | Create product |
+| Products | `GET /api/products` | Authenticated | `ProductResponse[]` | Product list/client-side search/checkout picker |
+| Products | `GET /api/products/{id}` | Authenticated | `ProductResponse` | Product detail/edit preload |
+| Products | `PUT /api/products/{id}` | Authenticated | `ProductResponse` | Update product |
+| Products | `PATCH /api/products/{id}/active` | Authenticated | `ProductResponse` | Enable/disable product |
+| Inventory | `GET /api/inventory` | Authenticated | `InventoryStockResponse[]` | Stock list |
+| Inventory | `GET /api/inventory/low-stock` | Authenticated | `InventoryStockResponse[]` | Low-stock alert/report |
+| Inventory | `GET /api/inventory/{productId}` | Authenticated | `InventoryStockResponse` | Product stock detail |
+| Inventory | `POST /api/inventory/{productId}/adjust` | Authenticated | `InventoryStockResponse` | Stock adjustment |
+| Inventory | `GET /api/inventory/{productId}/movements` | Authenticated | `StockMovementResponse[]` | Stock movement history |
+| Sales | `POST /api/sales/checkout` | `ADMIN`, `MANAGER`, `CASHIER` | `201 ReceiptResponse` | Checkout + receipt response |
+| Sales | `GET /api/sales` | `ADMIN`, `MANAGER`, `CASHIER` | `SaleResponse[]` | Sales history |
+| Sales | `GET /api/sales/{id}` | `ADMIN`, `MANAGER`, `CASHIER` | `SaleResponse` | Sale detail |
+| Sales | `POST /api/sales/{id}/refunds` | `ADMIN`, `MANAGER`, `CASHIER` | `201 RefundResponse` | Refund sale items |
+| Payments | `POST /api/payments` | `ADMIN`, `MANAGER`, `CASHIER` | `201 PaymentResponse` | Standalone payment creation if needed |
+| Payments | `GET /api/payments` | `ADMIN`, `MANAGER`, `CASHIER` | `PaymentResponse[]` | Payment list/admin view if needed |
+| Payments | `GET /api/payments/{id}` | `ADMIN`, `MANAGER`, `CASHIER` | `PaymentResponse` | Payment detail if needed |
+| Reports | `GET /api/reports/daily-sales?date=YYYY-MM-DD` | `ADMIN`, `MANAGER` | `SalesTotalResponse` | Daily total card |
+| Reports | `GET /api/reports/monthly-sales?year=YYYY&month=M` | `ADMIN`, `MANAGER` | `SalesTotalResponse` | Monthly total card |
+| Reports | `GET /api/reports/top-products` | `ADMIN`, `MANAGER` | `TopSellingProductResponse[]` | Top products table/chart |
+| Reports | `GET /api/reports/low-stock` | `ADMIN`, `MANAGER` | `InventoryStockResponse[]` | Low-stock report |
+| Reports | `GET /api/reports/sales-by-cashier` | `ADMIN`, `MANAGER` | `CashierSalesReportResponse[]` | Cashier performance |
+| Reports | `GET /api/reports/payment-summary` | `ADMIN`, `MANAGER` | `PaymentMethodSummaryResponse[]` | Payment method summary |
+| Users | `POST /api/users` | `ADMIN` | `201 UserResponse` | Admin creates user |
+| Users | `GET /api/users` | `ADMIN` | `UserResponse[]` | Admin user list |
+| Users | `PATCH /api/users/{id}/role` | `ADMIN` | `UserResponse` | Admin changes role |
+| Users | `PATCH /api/users/{id}/active` | `ADMIN` | `UserResponse` | Admin activates/deactivates user |
 
-Current list endpoints mostly return plain arrays, not Spring `Page<T>`. If backend later adds pagination, handle the actual OpenAPI shape. Do not blindly assume every list is `Page<T>`.
+All current list endpoints return plain arrays (`List<T>`), not Spring `Page<T>`. That includes category, product, inventory, stock movement, sale, payment, user, and report list endpoints. If backend later adds pagination, handle the actual OpenAPI shape. Do not blindly assume every list is `Page<T>`.
 
 ---
 
@@ -269,19 +271,33 @@ Rules:
 - On logout, clear token and cached server state.
 - Keep token storage isolated in `lib/auth/tokenStorage.ts`.
 
-Suggested route access:
+Backend-enforced role access:
 
-| Route | Roles |
+| Backend area | Access |
 |---|---|
-| `/login` | public |
-| `/` or `/dashboard` | `ADMIN`, `MANAGER`, `CASHIER` |
-| `/categories` | `ADMIN`, `MANAGER` |
-| `/products` | `ADMIN`, `MANAGER` |
-| `/inventory` | `ADMIN`, `MANAGER` |
-| `/checkout` | `ADMIN`, `MANAGER`, `CASHIER` |
-| `/sales` | `ADMIN`, `MANAGER`, `CASHIER` |
-| `/reports` | `ADMIN`, `MANAGER` |
-| `/users` | `ADMIN` |
+| `POST /api/auth/login` | Public |
+| `/api/auth/me` | Any authenticated user |
+| `/api/categories/**` | Any authenticated user |
+| `/api/products/**` | Any authenticated user |
+| `/api/inventory/**` | Any authenticated user |
+| `/api/sales/**` | `ADMIN`, `MANAGER`, `CASHIER` |
+| `/api/payments/**` | `ADMIN`, `MANAGER`, `CASHIER` |
+| `/api/reports/**` | `ADMIN`, `MANAGER` |
+| `/api/users/**` | `ADMIN` |
+
+Suggested frontend route/nav access. Product UX can be stricter than backend, but do not claim these are all backend-enforced:
+
+| Route | Roles | Backend note |
+|---|---|---|
+| `/login` | public | public |
+| `/` or `/dashboard` | `ADMIN`, `MANAGER`, `CASHIER` | all authenticated; avoid report calls for `CASHIER` |
+| `/categories` | `ADMIN`, `MANAGER` | backend currently allows any authenticated user |
+| `/products` | `ADMIN`, `MANAGER` | backend currently allows any authenticated user |
+| `/inventory` | `ADMIN`, `MANAGER` | backend currently allows any authenticated user |
+| `/checkout` | `ADMIN`, `MANAGER`, `CASHIER` | backend-enforced |
+| `/sales` | `ADMIN`, `MANAGER`, `CASHIER` | backend-enforced |
+| `/reports` | `ADMIN`, `MANAGER` | backend-enforced |
+| `/users` | `ADMIN` | backend-enforced |
 
 Define nav entries once in `routes/navConfig.ts`. Filter by role there, not inside every component like an amateur side quest.
 

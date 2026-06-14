@@ -141,6 +141,114 @@ Create the frontend contract checklist before implementation. No React code yet 
 - The next implementation step is clear.
 - No guessed DTO shapes remain in the plan.
 
+### Verified FE-00 Backend Contract Snapshot
+
+Verified from backend controllers, DTO records, `SecurityConfig`, `GlobalExceptionHandler`, and raw `/v3/api-docs`.
+
+#### Backend role enforcement
+
+- Public: `POST /api/auth/login`, `/actuator/health`, `/actuator/info`, `/swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs/**`.
+- Any authenticated user: `/api/auth/me`, `/api/categories/**`, `/api/products/**`, `/api/inventory/**`.
+- `ADMIN`, `MANAGER`, `CASHIER`: `/api/sales/**`, `/api/payments/**`.
+- `ADMIN`, `MANAGER`: `/api/reports/**`.
+- `ADMIN`: `/api/users/**`.
+
+Frontend route/nav rules may intentionally hide categories/products/inventory from `CASHIER` by product UX, but backend currently only requires authentication for those APIs.
+
+#### List response shapes
+
+Every current list endpoint returns a plain JSON array, not `Page<T>`:
+
+- `GET /api/categories` → `CategoryResponse[]`
+- `GET /api/products` → `ProductResponse[]`
+- `GET /api/inventory` → `InventoryStockResponse[]`
+- `GET /api/inventory/low-stock` → `InventoryStockResponse[]`
+- `GET /api/inventory/{productId}/movements` → `StockMovementResponse[]`
+- `GET /api/sales` → `SaleResponse[]`
+- `GET /api/payments` → `PaymentResponse[]`
+- `GET /api/reports/top-products` → `TopSellingProductResponse[]`
+- `GET /api/reports/low-stock` → `InventoryStockResponse[]`
+- `GET /api/reports/sales-by-cashier` → `CashierSalesReportResponse[]`
+- `GET /api/reports/payment-summary` → `PaymentMethodSummaryResponse[]`
+- `GET /api/users` → `UserResponse[]`
+
+#### Enum values
+
+```ts
+export type UserRole = 'ADMIN' | 'MANAGER' | 'CASHIER'
+export type PaymentMethod = 'CASH' | 'CARD'
+export type SaleStatus = 'COMPLETED' | 'PARTIALLY_REFUNDED' | 'REFUNDED'
+export type StockMovementType = 'ADJUSTMENT' | 'SALE' | 'REFUND'
+```
+
+#### Error response shape
+
+Backend-handled errors use `ApiErrorResponse` from `backend/src/main/java/com/retailcore/pos/common/dto`:
+
+```ts
+export interface ApiErrorResponse {
+  timestamp: string
+  status: number
+  error: string
+  message: string
+  fieldErrors: FieldErrorResponse[]
+}
+
+export interface FieldErrorResponse {
+  field: string
+  message: string
+}
+```
+
+Observed backend statuses:
+
+- `400` request-body validation → `message: "Validation failed"` and sorted `fieldErrors`.
+- `401` unauthenticated/invalid token → `message: "Authentication is required"`.
+- `403` wrong role or inactive login → `message: "Access denied"` or inactive-user message.
+- `404` resource-not-found exceptions.
+- `409` duplicate/business conflict exceptions.
+
+OpenAPI currently exposes success DTO schemas but does not include `ApiErrorResponse`; frontend error types must come from the backend `common/dto` files. Report endpoints require their documented query params (`date`, `year`, `month`); current backend framework-level query-param errors are not normalized by `GlobalExceptionHandler`, so frontend code should not emit malformed report requests.
+
+#### DTO field map
+
+Use these JSON field names when creating frontend TypeScript types. Java `Long`, `int`, `Integer`, and `BigDecimal` serialize as JSON numbers; `Instant` serializes as an ISO string.
+
+- `LoginRequest`: `email`, `password`
+- `AuthResponse`: `token`, `user: UserResponse`
+- `UserCreateRequest`: `email`, `name`, `password`, `role`, `active`
+- `UserRoleRequest`: `role`
+- `UserActiveRequest`: `active`
+- `UserResponse`: `id`, `email`, `name`, `role`, `active`, `createdAt`, `updatedAt`
+- `CategoryCreateRequest`: `name`, `description`
+- `CategoryUpdateRequest`: `name`, `description`, `active`
+- `CategoryResponse`: `id`, `name`, `description`, `active`, `createdAt`, `updatedAt`
+- `ProductCreateRequest`: `categoryId`, `sku`, `barcode`, `name`, `description`, `price`, `active`
+- `ProductUpdateRequest`: `categoryId`, `sku`, `barcode`, `name`, `description`, `price`, `active`
+- `ProductActiveRequest`: `active`
+- `ProductResponse`: `id`, `categoryId`, `categoryName`, `sku`, `barcode`, `name`, `description`, `price`, `active`, `createdAt`, `updatedAt`
+- `StockAdjustmentRequest`: `quantityChange`, `lowStockThreshold`, `reason`
+- `InventoryStockResponse`: `productId`, `sku`, `productName`, `quantity`, `lowStockThreshold`, `lowStock`, `createdAt`, `updatedAt`
+- `StockMovementResponse`: `id`, `productId`, `sku`, `movementType`, `quantityChange`, `stockAfter`, `reason`, `createdAt`
+- `CheckoutItemRequest`: `productId`, `quantity`
+- `CheckoutPaymentRequest`: `method`, `amount`, `cashTendered`
+- `CheckoutRequest`: `items`, `payment`
+- `SaleItemResponse`: `id`, `productId`, `sku`, `productName`, `quantity`, `unitPrice`, `lineTotal`
+- `SaleResponse`: `id`, `saleNumber`, `cashierId`, `cashierName`, `status`, `totalAmount`, `completedAt`, `items`
+- `PaymentCreateRequest`: `saleId`, `method`, `amount`, `cashTendered`
+- `PaymentResponse`: `id`, `saleId`, `saleNumber`, `method`, `amount`, `cashTendered`, `changeAmount`, `paidAt`
+- `ReceiptItemResponse`: `productId`, `sku`, `productName`, `quantity`, `unitPrice`, `lineTotal`
+- `ReceiptPaymentResponse`: `method`, `amount`, `cashTendered`, `changeAmount`, `paidAt`
+- `ReceiptResponse`: `saleId`, `saleNumber`, `cashierName`, `completedAt`, `items`, `totalAmount`, `payment`, `changeAmount`
+- `RefundItemRequest`: `productId`, `quantity`
+- `RefundRequest`: `items`, `reason`
+- `RefundItemResponse`: `id`, `productId`, `sku`, `productName`, `quantity`, `unitPrice`, `lineTotal`
+- `RefundResponse`: `id`, `saleId`, `saleNumber`, `saleStatus`, `totalAmount`, `reason`, `refundedAt`, `items`
+- `SalesTotalResponse`: `period`, `totalAmount`
+- `TopSellingProductResponse`: `productId`, `sku`, `productName`, `quantitySold`, `grossSales`
+- `CashierSalesReportResponse`: `cashierId`, `cashierName`, `cashierEmail`, `saleCount`, `totalAmount`
+- `PaymentMethodSummaryResponse`: `method`, `paymentCount`, `totalAmount`
+
 ### Base Prompt
 
 ```text
@@ -489,12 +597,12 @@ Build the first protected API-backed page using real dashboard data.
 ### Scope
 
 - Dashboard page visible to `ADMIN`, `MANAGER`, `CASHIER`.
-- Use report/inventory endpoints appropriate for the current role.
-- Suggested cards:
+- For `ADMIN`/`MANAGER`, use report/inventory endpoints appropriate for management dashboard cards:
   - daily sales total
   - monthly sales total
   - low-stock count/list
-  - top products preview for manager/admin
+  - top products preview
+- For `CASHIER`, do not call `/api/reports/**`; backend restricts those endpoints to `ADMIN`/`MANAGER`. Prefer cashier-safe quick actions and any allowed operational data.
 - Use loading/error/empty states.
 - Use `Intl.NumberFormat` and `Intl.DateTimeFormat` helpers.
 
