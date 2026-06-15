@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 
 import { AppLayout } from '../components/layout/AppLayout'
-import { LoginPlaceholderPage } from './LoginPlaceholderPage'
+import { LoginPage } from '../features/auth/pages/LoginPage'
 import { NotFoundPage } from './NotFoundPage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { RoleGuard } from './RoleGuard'
@@ -10,7 +10,7 @@ import { protectedRoutes } from './navConfig'
 
 export const router = createBrowserRouter([
   {
-    element: <LoginPlaceholderPage />,
+    element: <LoginPage />,
     path: '/login',
   },
   {

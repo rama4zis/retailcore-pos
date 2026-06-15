@@ -17,11 +17,11 @@ function getNavLinkClassName({ isActive }: { isActive: boolean }) {
 
 export function AppLayout() {
   const navigate = useNavigate()
-  const { clearSession, user } = useAuth()
+  const { logout, user } = useAuth()
   const navItems = getNavItemsForRole(user?.role)
 
   const handleSignOut = () => {
-    clearSession()
+    logout()
     navigate('/login', { replace: true })
   }
 
