@@ -4,6 +4,7 @@ import { AppLayout } from '../components/layout/AppLayout'
 import { LoginPage } from '../features/auth/pages/LoginPage'
 import { CategoriesPage } from '../features/categories/pages/CategoriesPage'
 import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
+import { InventoryPage } from '../features/inventory/pages/InventoryPage'
 import { ProductsPage } from '../features/products/pages/ProductsPage'
 import { NotFoundPage } from './NotFoundPage'
 import { ProtectedRoute } from './ProtectedRoute'
@@ -22,6 +23,10 @@ function getProtectedRouteElement(route: ProtectedRouteConfig) {
 
   if (route.id === 'products') {
     return <ProductsPage />
+  }
+
+  if (route.id === 'inventory') {
+    return <InventoryPage />
   }
 
   return <RoutePlaceholderPage route={route} />
