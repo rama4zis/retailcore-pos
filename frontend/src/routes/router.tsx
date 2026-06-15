@@ -2,11 +2,20 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 
 import { AppLayout } from '../components/layout/AppLayout'
 import { LoginPage } from '../features/auth/pages/LoginPage'
+import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
 import { NotFoundPage } from './NotFoundPage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { RoleGuard } from './RoleGuard'
 import { RoutePlaceholderPage } from './RoutePlaceholderPage'
-import { protectedRoutes } from './navConfig'
+import { protectedRoutes, type ProtectedRouteConfig } from './navConfig'
+
+function getProtectedRouteElement(route: ProtectedRouteConfig) {
+  if (route.id === 'dashboard') {
+    return <DashboardPage />
+  }
+
+  return <RoutePlaceholderPage route={route} />
+}
 
 export const router = createBrowserRouter([
   {
@@ -22,7 +31,7 @@ export const router = createBrowserRouter([
       ...protectedRoutes.map((route) => ({
         element: (
           <RoleGuard allowedRoles={route.roles}>
-            <RoutePlaceholderPage route={route} />
+            {getProtectedRouteElement(route)}
           </RoleGuard>
         ),
         path: route.path.slice(1),
