@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import type { InventoryStockResponse } from '../../../lib/api/inventory'
 import { Badge } from '../../../components/ui/Badge'
@@ -15,6 +15,7 @@ interface StockAdjustmentModalProps {
 }
 
 export function StockAdjustmentModal({ onClose, stock }: StockAdjustmentModalProps) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
   const [quantityChange, setQuantityChange] = useState('')
   const [lowStockThreshold, setLowStockThreshold] = useState(stock.lowStockThreshold.toString())
   const [reason, setReason] = useState('')
@@ -51,10 +52,36 @@ export function StockAdjustmentModal({ onClose, stock }: StockAdjustmentModalPro
 
   const projectedStock = stock.quantity + (parseInt(quantityChange, 10) || 0)
 
+  useEffect(() => {
+    closeButtonRef.current?.focus()
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-      <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
-        <h2 className="mb-4 text-xl font-semibold text-slate-900">Adjust Stock</h2>
+      <div
+        aria-labelledby="stock-adjustment-title"
+        aria-modal="true"
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg bg-white p-6 shadow-xl"
+        role="dialog"
+      >
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <h2 className="text-xl font-semibold text-slate-900" id="stock-adjustment-title">
+            Adjust Stock
+          </h2>
+          <Button ref={closeButtonRef} size="sm" type="button" variant="ghost" onClick={onClose}>
+            Close
+          </Button>
+        </div>
 
         <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
           <div className="mb-1 text-sm font-medium text-slate-700">{stock.productName}</div>

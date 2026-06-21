@@ -78,7 +78,7 @@ export function AppLayout() {
             </div>
           </header>
 
-          <main className="flex-1 px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-8">
+          <main className="flex-1 px-4 py-6 pb-32 sm:px-6 lg:px-8 lg:pb-8">
             <div className="mx-auto max-w-7xl">
               <Outlet />
             </div>
@@ -87,13 +87,13 @@ export function AppLayout() {
           <nav
             aria-label="Mobile primary navigation"
             className="fixed inset-x-0 bottom-0 z-20 grid border-t border-rc-border bg-rc-surface/95 px-2 py-2 shadow-[0_-8px_24px_rgb(15_23_42/0.08)] backdrop-blur lg:hidden"
-            style={{ gridTemplateColumns: `repeat(${Math.max(navItems.length, 1)}, minmax(0, 1fr))` }}
+            style={{ gridTemplateColumns: `repeat(${Math.min(Math.max(navItems.length, 1), 4)}, minmax(0, 1fr))` }}
           >
             {navItems.map((item) => (
               <NavLink
                 className={({ isActive }) =>
                   classNames(
-                    'rounded-lg px-2 py-2 text-center text-xs font-semibold transition-colors',
+                    'min-h-11 rounded-lg px-2 py-2 text-center text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rc-ring',
                     isActive
                       ? 'bg-rc-primary text-rc-on-primary'
                       : 'text-rc-secondary hover:bg-rc-muted hover:text-rc-foreground',

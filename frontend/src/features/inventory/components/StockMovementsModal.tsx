@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react'
+
 import type { InventoryStockResponse } from '../../../lib/api/inventory'
 import { Badge } from '../../../components/ui/Badge'
 import { Button } from '../../../components/ui/Button'
@@ -26,14 +28,41 @@ const movementTypeColors: Record<string, string> = {
 }
 
 export function StockMovementsModal({ onClose, stock }: StockMovementsModalProps) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
   const movementsQuery = useStockMovements(stock.productId)
   const errorMessage = movementsQuery.error ? getApiErrorMessage(movementsQuery.error) : null
 
+  useEffect(() => {
+    closeButtonRef.current?.focus()
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-      <div className="flex max-h-[90vh] w-full max-w-4xl flex-col rounded-lg bg-white shadow-xl">
+      <div
+        aria-labelledby="stock-movements-title"
+        aria-modal="true"
+        className="flex max-h-[90vh] w-full max-w-4xl flex-col rounded-lg bg-white shadow-xl"
+        role="dialog"
+      >
         <div className="border-b border-slate-200 p-6">
-          <h2 className="mb-2 text-xl font-semibold text-slate-900">Stock Movement History</h2>
+          <div className="mb-2 flex items-start justify-between gap-4">
+            <h2 className="text-xl font-semibold text-slate-900" id="stock-movements-title">
+              Stock Movement History
+            </h2>
+            <Button ref={closeButtonRef} size="sm" variant="ghost" onClick={onClose}>
+              Close
+            </Button>
+          </div>
           <div className="text-sm text-slate-700">{stock.productName}</div>
           <div className="text-xs text-slate-600">SKU: {stock.sku}</div>
         </div>

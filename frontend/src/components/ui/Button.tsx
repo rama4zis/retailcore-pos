@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
 
 import { classNames } from '../../lib/classNames'
 import { Spinner } from '../feedback/Spinner'
@@ -32,7 +32,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   success: 'border-rc-accent bg-rc-accent text-white hover:bg-rc-accent-strong',
 }
 
-export function Button({
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button({
   children,
   className,
   disabled,
@@ -44,7 +44,7 @@ export function Button({
   type = 'button',
   variant = 'primary',
   ...props
-}: ButtonProps) {
+}, ref) {
   const isDisabled = disabled || isLoading
 
   return (
@@ -56,6 +56,7 @@ export function Button({
         className,
       )}
       disabled={isDisabled}
+      ref={ref}
       type={type}
       {...props}
     >
@@ -64,4 +65,4 @@ export function Button({
       {!isLoading ? rightIcon : null}
     </button>
   )
-}
+})
