@@ -7,6 +7,7 @@ import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
 import { InventoryPage } from '../features/inventory/pages/InventoryPage'
 import { ProductsPage } from '../features/products/pages/ProductsPage'
 import { CheckoutPage } from '../features/sales/pages/CheckoutPage'
+import { SalesPage } from '../features/sales/pages/SalesPage'
 import { NotFoundPage } from './NotFoundPage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { RoleGuard } from './RoleGuard'
@@ -32,6 +33,10 @@ function getProtectedRouteElement(route: ProtectedRouteConfig) {
 
   if (route.id === 'checkout') {
     return <CheckoutPage />
+  }
+
+  if (route.id === 'sales') {
+    return <SalesPage />
   }
 
   return <RoutePlaceholderPage route={route} />
