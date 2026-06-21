@@ -9,6 +9,7 @@ import { ProductsPage } from '../features/products/pages/ProductsPage'
 import { ReportsPage } from '../features/reports/pages/ReportsPage'
 import { CheckoutPage } from '../features/sales/pages/CheckoutPage'
 import { SalesPage } from '../features/sales/pages/SalesPage'
+import { UsersPage } from '../features/users/pages/UsersPage'
 import { NotFoundPage } from './NotFoundPage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { RoleGuard } from './RoleGuard'
@@ -42,6 +43,10 @@ function getProtectedRouteElement(route: ProtectedRouteConfig) {
 
   if (route.id === 'reports') {
     return <ReportsPage />
+  }
+
+  if (route.id === 'users') {
+    return <UsersPage />
   }
 
   return <RoutePlaceholderPage route={route} />
