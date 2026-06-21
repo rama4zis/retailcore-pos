@@ -6,6 +6,7 @@ import { CategoriesPage } from '../features/categories/pages/CategoriesPage'
 import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
 import { InventoryPage } from '../features/inventory/pages/InventoryPage'
 import { ProductsPage } from '../features/products/pages/ProductsPage'
+import { CheckoutPage } from '../features/sales/pages/CheckoutPage'
 import { NotFoundPage } from './NotFoundPage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { RoleGuard } from './RoleGuard'
@@ -27,6 +28,10 @@ function getProtectedRouteElement(route: ProtectedRouteConfig) {
 
   if (route.id === 'inventory') {
     return <InventoryPage />
+  }
+
+  if (route.id === 'checkout') {
+    return <CheckoutPage />
   }
 
   return <RoutePlaceholderPage route={route} />
