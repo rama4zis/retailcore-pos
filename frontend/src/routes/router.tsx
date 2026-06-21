@@ -6,6 +6,7 @@ import { CategoriesPage } from '../features/categories/pages/CategoriesPage'
 import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
 import { InventoryPage } from '../features/inventory/pages/InventoryPage'
 import { ProductsPage } from '../features/products/pages/ProductsPage'
+import { ReportsPage } from '../features/reports/pages/ReportsPage'
 import { CheckoutPage } from '../features/sales/pages/CheckoutPage'
 import { SalesPage } from '../features/sales/pages/SalesPage'
 import { NotFoundPage } from './NotFoundPage'
@@ -37,6 +38,10 @@ function getProtectedRouteElement(route: ProtectedRouteConfig) {
 
   if (route.id === 'sales') {
     return <SalesPage />
+  }
+
+  if (route.id === 'reports') {
+    return <ReportsPage />
   }
 
   return <RoutePlaceholderPage route={route} />
